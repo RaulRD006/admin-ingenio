@@ -98,13 +98,11 @@ export class Landing implements OnInit {
       
       const navEntries = window.performance.getEntriesByType('navigation') as any[];
       if (navEntries.length > 0 && navEntries[0].type === 'back_forward') {
-        // Si el usuario usó Atrás/Adelante para llegar aquí, destruimos la sesión por seguridad
         localStorage.clear();
         this.router.navigate(['/login'], { replaceUrl: true });
         return;
       }
 
-      // Validamos que exista la sesión
       const sesion = localStorage.getItem('sesion');
       if (!sesion) {
         this.router.navigate(['/login'], { replaceUrl: true });
@@ -133,6 +131,7 @@ export class Landing implements OnInit {
     this.cortadoresService.getGrupos().subscribe({
       next: (data: any[]) => {
         this.gruposCatalogo = data;
+        this.procesarGruposYZonas(); // <-- CORRECCIÓN: Actualiza los grupos cuando llegan de la BD
         this.cdr.detectChanges(); 
       },
       error: (err) => console.error('Error al cargar grupos:', err)
@@ -243,6 +242,7 @@ export class Landing implements OnInit {
           this.mensajeCatalogoError = 'Error al eliminar: ' + (err.error?.error || err.message);
           this.cargandoCatalogo = false;
           this.cdr.detectChanges();
+     
           setTimeout(() => { 
             this.mensajeCatalogoError = ''; 
             this.cdr.detectChanges(); 
@@ -318,6 +318,7 @@ export class Landing implements OnInit {
         error: (err) => {
           this.mensajeCatalogoError = 'Error al eliminar: ' + (err.error?.error || err.message);
           this.cargandoCatalogo = false;
+          
           this.cdr.detectChanges();
           setTimeout(() => { 
             this.mensajeCatalogoError = ''; 
@@ -392,6 +393,7 @@ export class Landing implements OnInit {
           this.mensajeCatalogoError = 'Error al eliminar: ' + (err.error?.error || err.message);
           this.cargandoCatalogo = false;
           this.cdr.detectChanges();
+ 
           setTimeout(() => { 
             this.mensajeCatalogoError = ''; 
             this.cdr.detectChanges();
@@ -411,7 +413,13 @@ export class Landing implements OnInit {
   // MÉTODOS EXISTENTES 
   // ==========================================
   procesarGruposYZonas() {
-    const idGruposUnicos = [...new Set(this.cortadores.map(c => c.id_grupo))];
+    // CORRECCIÓN: Unir los IDs de grupos de cortadores Y de la base de datos completa
+    const idsCortadores = this.cortadores.map(c => c.id_grupo);
+    const idsCatalogo = this.gruposCatalogo.map(g => g.id_grupo);
+    
+    // Filtramos para evitar valores null o undefined y removemos duplicados
+    const idGruposUnicos = [...new Set([...idsCortadores, ...idsCatalogo])].filter(id => id != null);
+
     this.grupos = idGruposUnicos.map(id => {
       const integrantes = this.cortadores.filter(c => c.id_grupo === id);
       return {
@@ -419,16 +427,20 @@ export class Landing implements OnInit {
         zona: integrantes[0]?.zona || 'Local',
         cortadores: integrantes.length,
         codigo: `G${id}`,
-        expanded: false
+        expanded: false,
+        id_grupo: id
       };
-    });
+    }).sort((a, b) => a.id_grupo - b.id_grupo); // Ordenamos numéricamente
+
     const zonasUnicas = [...new Set(this.cortadores.map(c => c.zona))];
     const colores = ['#1A3668', '#8CC63F', '#2A55A3', '#68962A', '#112445', '#A5D665'];
+    
     this.zonas = zonasUnicas.map((z, index) => ({
       nombre: z,
       cortadores: this.cortadores.filter(c => c.zona === z).length,
       color: colores[index % colores.length]
     }));
+
     const conteoMunicipios: { [key: string]: number } = {};
     this.cortadores.forEach(c => {
       const muni = c.localidad || 'Sin registro';
@@ -436,6 +448,7 @@ export class Landing implements OnInit {
         conteoMunicipios[muni] = (conteoMunicipios[muni] || 0) + 1;
       }
     });
+
     let municipioTop = 'Ninguno';
     let maxMuniCount = 0;
 
@@ -486,13 +499,16 @@ export class Landing implements OnInit {
       { label: 'Masculino', count: masc, percent: (masc/total)*100, color: '#1A3668' }, 
       { label: 'Femenino', count: fem, percent: (fem/total)*100, color: '#8CC63F' }   
     ];
+
     this.datosEdad = [
       { label: 'Joven (18-25)', count: joven, percent: (joven/total)*100, color: '#A5D665' }, 
       { label: 'Adulto (26-40)', count: adulto, percent: (adulto/total)*100, color: '#8CC63F' }, 
       { label: 'Adulto Mayor (41+)', count: mayor, percent: (mayor/total)*100, color: '#1A3668' }  
     ];
+
     const coloresComunidades = ['#112445', '#4B80E6', '#2A55A3', '#A5D665', '#8CC63F'];
     const comunidadesOrdenadas = Object.keys(conteoComunidades).sort((a, b) => conteoComunidades[b] - conteoComunidades[a]);
+    
     this.datosComunidad = comunidadesOrdenadas.map((comunidad, index) => {
       const cantidad = conteoComunidades[comunidad];
       const percentExacto = (cantidad / total) * 100;
@@ -560,6 +576,7 @@ export class Landing implements OnInit {
       const muniOk = !this.filtroMunicipio || (c.localidad || 'Sin registro') === this.filtroMunicipio;
       return nombreOk && zonaOk && grupoOk && muniOk;
     });
+    
     this.calcularGraficasCirculares();
   }
 
@@ -611,7 +628,6 @@ export class Landing implements OnInit {
     if (this.rolUsuario !== 'admin' || this.cargando) return;
     this.mensajeErrorForm = '';
     this.mensajeExitoForm = '';
-
     if (!this.form.nombre || !this.form.grupo || !this.form.edad || !this.form.localidad) {
       this.mensajeErrorForm = 'Por favor completa todos los campos requeridos del formulario.';
       return;
@@ -630,6 +646,7 @@ export class Landing implements OnInit {
 
     this.cargando = true; 
     const idGrupoNumerico = parseInt(this.form.grupo.replace(/\D/g, '')) || 1;
+    
     const cortadorPayload: any = {
       nombre_completo: this.form.nombre,
       edad: this.form.edad,
@@ -668,7 +685,7 @@ export class Landing implements OnInit {
           this.cdr.detectChanges(); 
 
           setTimeout(() => { 
-            this.cerrarFormulario(); 
+            this.cerrarFormulario();
             this.cdr.detectChanges(); 
           }, 500);
         },
@@ -705,7 +722,7 @@ export class Landing implements OnInit {
             this.cdr.detectChanges(); 
 
             setTimeout(() => { 
-              this.cerrarFormulario(); 
+              this.cerrarFormulario();
               this.cdr.detectChanges();
             }, 500);
           },
@@ -759,6 +776,7 @@ export class Landing implements OnInit {
     let start = 0;
     const totalCountEnPagina = datos.reduce((sum, d) => sum + d.count, 0);
     if (totalCountEnPagina === 0) return 'conic-gradient(#e5e7eb 0% 100%)';
+    
     for (let d of datos) {
       let percentRelativo = (d.count / totalCountEnPagina) * 100;
       let end = start + percentRelativo;
