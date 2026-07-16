@@ -7,11 +7,10 @@ import { cortadores } from './cortador.model';
   providedIn: 'root'
 })
 export class cortadoresService {
-  private apiUrl = 'http://localhost:4200/api/cortadores'; 
-  
-  // Nuevas rutas base para nuestros catálogos
-  private apiGruposUrl = 'http://localhost:4200/api/grupos'; 
-  private apiLocalidadesUrl = 'http://localhost:4200/api/localidades'; 
+  // Rutas relativas para que funcionen tanto en local como en Render
+  private apiUrl = '/api/cortadores'; 
+  private apiGruposUrl = '/api/grupos'; 
+  private apiLocalidadesUrl = '/api/localidades'; 
 
   constructor(private http: HttpClient) {}
 
