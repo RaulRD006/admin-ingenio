@@ -1,0 +1,599 @@
+<div class="dashboard" [class.dark]="isDark">
+
+  <header class="header" style="position: relative;">
+    <div class="header-brand" style="display: flex; align-items: center; position: relative; height: 80px; width: 100%;">
+      
+      <div class="brand-logo" style="background: transparent; padding: 0; width: 250px; height: 75px; display: flex; align-items: center; justify-content: flex-start;">
+        <img src="LOGO_BSM.png" alt="Logo Empresa" style="width: 130%; height: 130%; object-fit: contain; object-position: left center;">
+      </div>
+      
+      <div class="brand-text" style="position: absolute; left: 165px; display: flex; flex-direction: column; justify-content: center; gap: 2px;">
+        <h1 style="margin: 0 !important; padding: 0 !important; font-size: 1.5rem; font-weight: 700; line-height: 1.1; white-space: nowrap;">Panel de Administración</h1>
+        <p style="margin: 0 !important; padding: 0 !important; font-size: 0.875rem; opacity: 0.7; line-height: 1.1; white-space: nowrap;">Gestión de cortadores</p>
+      </div>
+
+    </div>
+    <div class="header-actions">
+      <span class="role-badge" style="background: #e5e7eb; color: #374151; padding: 5px 10px; border-radius: 20px; font-size: 0.8em; margin-right: 15px; font-weight: bold; text-transform: uppercase;">
+        {{ rolUsuario }}
+      </span>
+
+      <button class="btn-icon" (click)="toggleTheme()" title="Cambiar tema">
+        <span *ngIf="!isDark">☀️</span>
+        <span *ngIf="isDark">🌙</span>
+      </button>
+      <button class="btn-salir" (click)="salir()">
+        <span>⬅</span> Salir
+      </button>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <div class="tarjeta-catalogos" *ngIf="rolUsuario === 'admin'">
+      <div class="cabecera-catalogos">
+        <h3>⚙️ Catálogos del Sistema</h3>
+        <p>Gestiona las opciones base para el registro de cortadores.</p>
+      </div>
+      
+      <div class="botones-catalogos">
+        <button class="btn-catalogo" (click)="abrirModalZafras()">
+          <span class="icono">🚜</span>
+          <span>Zafras</span>
+        </button>
+        
+        <button class="btn-catalogo" (click)="abrirModalGrupos()">
+          <span class="icono">👥</span>
+          <span>Grupos</span>
+        </button>
+        
+        <button class="btn-catalogo" (click)="abrirModalLocalidades()">
+          <span class="icono">📍</span>
+          <span>Localidades</span>
+        </button>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <p class="stat-label">Total Cortadores</p>
+          <h2 class="stat-value">{{ stats.totalCortadores }}</h2>
+          <p class="stat-detail positive"></p>
+        </div>
+        <div class="stat-icon blue">👥</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <p class="stat-label">Localidades Activas</p>
+          <h2 class="stat-value">{{ stats.zonasActivas }}</h2>
+          <p class="stat-detail positive"></p>
+        </div>
+        <div class="stat-icon purple">📍</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <p class="stat-label">Grupos Activos</p>
+          <h2 class="stat-value">{{ stats.totalGrupos }}</h2>
+          <p class="stat-detail"></p>
+        </div>
+        <div class="stat-icon green">👥</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <p class="stat-label">Localidad Principal</p>
+          <h2 class="stat-value">{{ stats.zonaPrincipal }}</h2>
+        </div>
+        <div class="stat-icon orange">📈</div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <h3>Análisis Demográfico</h3>
+            <p class="chart-sub">Métricas visuales del personal</p>
+          </div>
+          <div class="chart-tabs">
+            <button [class.active]="graficaActiva === 'municipio'" (click)="graficaActiva = 'municipio'">Zonas</button>
+            <button [class.active]="graficaActiva === 'sexo'" (click)="graficaActiva = 'sexo'">Sexo</button>
+            <button [class.active]="graficaActiva === 'edad'" (click)="graficaActiva = 'edad'">Edad</button>
+            <button [class.active]="graficaActiva === 'comunidad'" (click)="graficaActiva = 'comunidad'">Origen</button>
+          </div>
+        </div>
+
+        <div class="sub-chart-toggle" *ngIf="graficaActiva === 'sexo' || graficaActiva === 'edad' || graficaActiva === 'comunidad'">
+          <button [class.active]="tipoGraficaSub === 'pastel'" (click)="tipoGraficaSub = 'pastel'">⭕ Pastel</button>
+          <button [class.active]="tipoGraficaSub === 'barras'" (click)="tipoGraficaSub = 'barras'">📊 Barras</button>
+        </div>
+
+        <div class="bar-chart" *ngIf="graficaActiva === 'municipio'">
+          <div class="chart-bars">
+            <div class="bar-group" *ngFor="let zona of zonas">
+              <div class="bar-wrap">
+                <div class="bar" [style.height.%]="(zona.cortadores / stats.totalCortadores) * 100" [style.background]="zona.color"></div>
+              </div>
+              <span class="bar-label">{{ zona.nombre }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pie-chart-container" *ngIf="graficaActiva === 'sexo' && tipoGraficaSub === 'pastel'">
+          <div class="pie" [style.background]="obtenerGradienteCircular(datosSexo)"></div>
+          <div class="pie-legend">
+            <div class="legend-item" *ngFor="let item of datosSexo">
+              <span class="legend-color" [style.background]="item.color"></span>
+              <span class="legend-label">{{ item.label }}</span>
+              <span class="legend-percent">{{ item.percent | number:'1.0-0' }}% ({{ item.count }})</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-chart" *ngIf="graficaActiva === 'sexo' && tipoGraficaSub === 'barras'">
+          <div class="chart-bars">
+            <div class="bar-group" *ngFor="let item of datosSexo">
+              <div class="bar-wrap">
+                <div class="bar" [style.height.%]="item.percent" [style.background]="item.color"></div>
+              </div>
+              <span class="bar-label">{{ item.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pie-chart-container" *ngIf="graficaActiva === 'edad' && tipoGraficaSub === 'pastel'">
+          <div class="pie" [style.background]="obtenerGradienteCircular(datosEdad)"></div>
+          <div class="pie-legend">
+            <div class="legend-item" *ngFor="let item of datosEdad">
+              <span class="legend-color" [style.background]="item.color"></span>
+              <span class="legend-label">{{ item.label }}</span>
+              <span class="legend-percent">{{ item.percent | number:'1.0-0' }}% ({{ item.count }})</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-chart" *ngIf="graficaActiva === 'edad' && tipoGraficaSub === 'barras'">
+          <div class="chart-bars">
+            <div class="bar-group" *ngFor="let item of datosEdad">
+              <div class="bar-wrap">
+                <div class="bar" [style.height.%]="item.percent" [style.background]="item.color"></div>
+              </div>
+              <span class="bar-label">{{ item.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pie-chart-container" *ngIf="graficaActiva === 'comunidad' && tipoGraficaSub === 'pastel'">
+          <div class="pie" [style.background]="obtenerGradienteCircularComunidad(datosComunidadPaginados)"></div>
+          <div class="pie-legend">
+            <div class="legend-item" *ngFor="let item of datosComunidadPaginados">
+              <span class="legend-color" [style.background]="item.color"></span>
+              <span class="legend-label">{{ item.label }}</span>
+              <span class="legend-percent">{{ item.percentVisible }}% ({{ item.count }})</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-chart" *ngIf="graficaActiva === 'comunidad' && tipoGraficaSub === 'barras'">
+          <div class="chart-bars">
+            <div class="bar-group" *ngFor="let item of datosComunidadPaginados">
+              <div class="bar-wrap">
+                <div class="bar" [style.height.%]="item.percent" [style.background]="item.color"></div>
+              </div>
+              <span class="bar-label" style="font-size: 0.75em; text-align: center; word-wrap: break-word; width: 60px;">{{ item.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pagination-controls" *ngIf="graficaActiva === 'comunidad'" style="margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 15px;">
+          <button class="btn-page" (click)="paginaAnteriorComunidad()" [disabled]="paginaComunidad === 0">
+            ⬅ Ant
+          </button>
+          <span class="page-info" style="font-weight: bold; font-size: 0.9em; color: #6b7280;">
+            Pág. {{ paginaComunidad + 1 }} de {{ totalPaginasComunidad }}
+          </span>
+          <button class="btn-page" (click)="paginaSiguienteComunidad()" [disabled]="(paginaComunidad + 1) * itemsPaginaComunidad >= datosComunidad.length">
+            Sig ➡
+          </button>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <h3>Resumen por localidad</h3>
+        <p class="chart-sub">Cantidad de personal</p>
+        <div class="summary-list">
+          <div class="summary-item" *ngFor="let zona of zonas">
+            <div class="summary-left">
+              <span class="summary-dot" [style.background]="zona.color"></span>
+              <span>{{ zona.nombre }}</span>
+            </div>
+            <span class="summary-count">{{ zona.cortadores }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="groups-card">
+      <div class="groups-header">
+        <div>
+          <h3>Grupos</h3>
+          <p class="chart-sub">{{ stats.totalGrupos }} grupos • {{ stats.totalCortadores }} cortadores totales</p>
+        </div>
+      </div>
+      
+      <div class="groups-list">
+        <ng-container *ngFor="let grupo of grupos | slice:(paginaActual * itemsPorPagina):((paginaActual + 1) * itemsPorPagina)">
+          
+          <div class="group-item" (click)="toggleGrupo(grupo)" [style.marginBottom]="grupo.expanded ? '0' : '10px'" [style.borderRadius]="grupo.expanded ? '10px 10px 0 0' : '10px'">
+            <div class="group-left">
+              <span class="group-arrow" [class.open]="grupo.expanded">›</span>
+              <div>
+                <p class="group-name">{{ grupo.nombre }}</p>
+                <div class="group-meta">
+                  <span>📍 {{ grupo.zona }}</span>
+                  <span>👥 {{ grupo.cortadores }} cortadores</span>
+                </div>
+              </div>
+            </div>
+            <span class="group-badge">{{ grupo.codigo }}</span>
+          </div>
+
+          <div class="group-members" *ngIf="grupo.expanded">
+             <ng-container *ngFor="let c of cortadores">
+                <div class="member-item" *ngIf="c.grupo === grupo.nombre">
+                   <span class="member-icon">👤</span>
+                   <div class="member-info">
+                     <p class="member-name" style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                       {{ c.nombre }}
+                       <span style="background: #e2e8f0; color: #475569; font-size: 0.7em; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
+                         Zafra {{ c.zafra || '2025-2026' }}
+                       </span>
+                     </p>
+                     <p class="member-loc" style="margin: 4px 0 0 0;">📍 {{ c.localidad }} &nbsp;•&nbsp;  {{ c.edad }} años</p>
+                   </div>
+                </div>
+             </ng-container>
+          </div>
+
+        </ng-container>
+      </div>
+
+      <div class="pagination-controls">
+        <button class="btn-page" (click)="paginaAnterior()" [disabled]="paginaActual === 0">
+          ⬅ Anterior
+        </button>
+        <span class="page-info">
+          Página {{ paginaActual + 1 }} de {{ totalPaginas }}
+        </span>
+        <button class="btn-page" (click)="paginaSiguiente()" [disabled]="(paginaActual + 1) * itemsPorPagina >= grupos.length">
+          Siguiente ➡
+        </button>
+      </div>
+    </div>
+
+    <div class="filters-card">
+      <h3 class="filters-title">🔽 Filtros de Búsqueda</h3>
+      <div class="filters-row">
+        
+        <div class="filter-group">
+          <label>Buscar por nombre</label>
+          <div class="search-input">
+            <span>🔍</span>
+            <input type="text" [(ngModel)]="filtroNombre" placeholder="Nombre del cortador..." (input)="filtrar()" />
+          </div>
+        </div>
+        
+        <div class="filter-group">
+          <label>Filtrar por Zona</label>
+          <select [(ngModel)]="filtroZona" (change)="filtrar()">
+            <option value="">Todas las zonas</option>
+            <option *ngFor="let zona of zonas" [value]="zona.nombre">{{ zona.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Filtrar por Municipio</label>
+          <select [(ngModel)]="filtroMunicipio" (change)="filtrar()">
+            <option value="">Todos los municipios</option>
+            <option *ngFor="let muni of municipiosFiltrados" [value]="muni">{{ muni }}</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label>Filtrar por grupo</label>
+          <select [(ngModel)]="filtroGrupo" (change)="filtrar()">
+            <option value="">Todos los grupos</option>
+            <option *ngFor="let grupo of grupos" [value]="grupo.nombre">{{ grupo.nombre }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="crud-section" [class.modo-visitante]="rolUsuario === 'visitante'">
+
+      <div class="add-card" (click)="abrirFormulario()" *ngIf="!mostrarFormulario && rolUsuario === 'admin'">
+        <div class="add-icon">+</div>
+        <div>
+          <p class="add-title">Añadir Nuevo Cortador</p>
+          <p class="add-sub">Registrar personal en el sistema</p>
+        </div>
+      </div>
+
+      <div class="form-card" *ngIf="mostrarFormulario">
+        <div class="form-card-header">
+          <h3>{{ cortadorEditando ? 'Editar Cortador' : 'Añadir Nuevo Cortador' }}</h3>
+          <button class="btn-close" (click)="cerrarFormulario()">✕</button>
+        </div>
+        <div class="form-fields">
+          <div class="field-group">
+            <label>Nombre Completo</label>
+            <input type="text" [(ngModel)]="form.nombre" placeholder="Nombre completo" />
+          </div>
+          <div class="field-group">
+            <label>Edad</label>
+            <input type="number" [(ngModel)]="form.edad" placeholder="Edad" />
+          </div>
+          <div class="field-group">
+            <label>Sexo</label>
+            <select [(ngModel)]="form.sexo">
+              <option value="">Seleccionar</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+            </select>
+          </div>
+          
+          <div class="field-group">
+            <label>Localidad</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="text" [(ngModel)]="form.localidad" (input)="actualizarZonaFormulario()" placeholder="Ej: Omealca" style="flex: 1;" />
+              <span *ngIf="form.zona" 
+                    style="padding: 5px 10px; border-radius: 20px; font-size: 0.8em; font-weight: bold; color: white;"
+                    [style.background]="form.zona === 'Local' ? '#1A3668' : '#8CC63F'">
+                {{ form.zona }}
+              </span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Grupo</label>
+            <select [(ngModel)]="form.grupo">
+              <option value="">Seleccionar grupo</option>
+              <option *ngFor="let grupo of gruposCatalogo" [value]="grupo.nombre">{{ grupo.nombre }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-error-msg" *ngIf="mensajeErrorForm" style="color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 0.9em; font-weight: 600; text-align: center; border: 1px solid #fca5a5;">
+          ⚠️ {{ mensajeErrorForm }}
+        </div>
+
+        <div class="form-success-msg" *ngIf="mensajeExitoForm" style="color: #10b981; background: #ecfdf5; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 0.9em; font-weight: 600; text-align: center; border: 1px solid #6ee7b7;">
+          ✅ {{ mensajeExitoForm }}
+        </div>
+
+        <button class="btn-guardar" (click)="guardarCortador()" [disabled]="cargando">
+          {{ cargando ? '⏳ Guardando...' : (cortadorEditando ? '💾 Guardar Cambios' : '➕ Añadir Cortador') }}
+        </button>
+      </div>
+
+      <div class="list-card">
+        <div class="list-header">
+          <h3>Lista de Cortadores</h3>
+          <span class="list-count">{{ cortadoresFiltrados.length }} cortadores</span>
+        </div>
+        <div class="cortador-item" *ngFor="let c of cortadoresFiltrados" [class.selected]="cortadorEditando?.id === c.id">
+          <div class="cortador-info">
+            <p class="cortador-nombre">{{ c.nombre }}</p>
+            <div class="cortador-meta">
+              <span>💼 {{ c.ocupacion }}</span>
+              <span>📍 {{ c.zona }}</span>
+              <span>✉ {{ c.localidad }}</span>
+            </div>
+          </div>
+          
+          <div class="cortador-actions" *ngIf="rolUsuario === 'admin'">
+            <button class="btn-edit" (click)="editarCortador(c)">✏️</button>
+            <button class="btn-delete" (click)="eliminarCortador(c.id)">🗑️</button>
+          </div>
+          
+        </div>
+        <div class="empty-state" *ngIf="cortadoresFiltrados.length === 0">
+          No se encontraron cortadores con esos filtros.
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="modal-overlay" *ngIf="mostrarModalLocalidades" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; justify-content: center; align-items: center;">
+    <div class="modal-content" [style.background]="isDark ? '#1f2937' : '#ffffff'" [style.color]="isDark ? '#f3f4f6' : '#111827'" style="padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0; font-size: 1.2rem;">📍 Catálogo de Localidades</h3>
+        <button (click)="cerrarModalLocalidades()" [style.color]="isDark ? '#f3f4f6' : '#111827'" style="background: none; border: none; font-size: 1.5em; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+  
+  <input type="text" 
+         [(ngModel)]="formLocalidad.nombre" 
+         placeholder="Nombre de localidad" 
+         style="flex: 1 1 200px; min-width: 200px; padding: 10px; border-radius: 6px; outline: none;"
+         [style.color]="isDark ? '#ffffff' : '#000000'"
+         [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'"
+         [style.border]="isDark ? '1px solid #4b5563' : '1px solid #d1d5db'">
+
+  <select [(ngModel)]="formLocalidad.es_foranea" 
+          style="padding: 10px; border-radius: 6px; outline: none;"
+          [style.color]="isDark ? '#ffffff' : '#000000'"
+          [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'"
+          [style.border]="isDark ? '1px solid #4b5563' : '1px solid #d1d5db'">
+    <option [ngValue]="false" [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'" [style.color]="isDark ? '#ffffff' : '#000000'">Local</option>
+    <option [ngValue]="true" [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'" [style.color]="isDark ? '#ffffff' : '#000000'">Foráneo</option>
+  </select>
+
+  <button (click)="guardarNuevaLocalidad()" 
+          [disabled]="cargandoCatalogo" 
+          style="background: #10b981; color: white; font-weight: bold; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer;">
+    ➕ Agregar
+  </button>
+
+</div>
+
+      <div *ngIf="mensajeCatalogoError" style="color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; border: 1px solid #fca5a5;">⚠️ {{ mensajeCatalogoError }}</div>
+      <div *ngIf="mensajeCatalogoExito" style="color: #10b981; background: #ecfdf5; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; border: 1px solid #6ee7b7;">✅ {{ mensajeCatalogoExito }}</div>
+
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li *ngFor="let loc of localidadesCatalogo" [style.borderBottom]="isDark ? '1px solid #374151' : '1px solid #e5e7eb'" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 5px;">
+          <span>
+            <b>{{ loc.nombre }}</b> 
+            <span style="font-size: 0.85em; margin-left: 8px; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #475569;">
+              {{ loc.es_foranea ? 'Foráneo' : 'Local' }}
+            </span>
+          </span>
+          <button (click)="eliminarLocalidad(loc.id_localidad)" title="Eliminar" style="background: #ef4444; color: white; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer;">🗑️</button>
+        </li>
+      </ul>
+      <div *ngIf="localidadesCatalogo.length === 0" style="text-align: center; padding: 20px; opacity: 0.6;">No hay localidades registradas.</div>
+
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="mostrarModalGrupos" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; justify-content: center; align-items: center;">
+    <div class="modal-content" [style.background]="isDark ? '#1f2937' : '#ffffff'" [style.color]="isDark ? '#f3f4f6' : '#111827'" style="padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0; font-size: 1.2rem;">👥 Catálogo de Grupos</h3>
+        <button (click)="cerrarModalGrupos()" [style.color]="isDark ? '#f3f4f6' : '#111827'" style="background: none; border: none; font-size: 1.5em; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+  
+  <input type="number" 
+         [(ngModel)]="formGrupo.id_grupo" 
+         placeholder="ID (Ej: 11804)" 
+         style="width: 120px; padding: 10px; border-radius: 6px; outline: none;"
+         [style.color]="isDark ? '#ffffff' : '#000000'"
+         [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'"
+         [style.border]="isDark ? '1px solid #4b5563' : '1px solid #d1d5db'">
+
+  <input type="text" 
+         [(ngModel)]="formGrupo.nombre" 
+         placeholder="Nombre del grupo" 
+         style="flex: 1; min-width: 150px; padding: 10px; border-radius: 6px; outline: none;"
+         [style.color]="isDark ? '#ffffff' : '#000000'"
+         [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'"
+         [style.border]="isDark ? '1px solid #4b5563' : '1px solid #d1d5db'">
+  
+  <select [(ngModel)]="formGrupo.zona" 
+          style="width: 100%; padding: 10px; border-radius: 6px; outline: none; margin-top: 5px;"
+          [style.color]="isDark ? '#ffffff' : '#000000'"
+          [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'"
+          [style.border]="isDark ? '1px solid #4b5563' : '1px solid #d1d5db'">
+    <option value="Local" [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'" [style.color]="isDark ? '#ffffff' : '#000000'">Zona Local</option>
+    <option value="Foráneo" [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'" [style.color]="isDark ? '#ffffff' : '#000000'">Zona Foránea</option>
+  </select>
+  
+  <button (click)="guardarNuevoGrupo()" 
+          [disabled]="cargandoCatalogo" 
+          style="background: #10b981; color: white; font-weight: bold; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 5px;">
+    ➕ Agregar Nuevo Grupo
+  </button>
+
+</div>
+
+      <div *ngIf="mensajeCatalogoError" style="color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; border: 1px solid #fca5a5;">⚠️ {{ mensajeCatalogoError }}</div>
+      <div *ngIf="mensajeCatalogoExito" style="color: #10b981; background: #ecfdf5; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; border: 1px solid #6ee7b7;">✅ {{ mensajeCatalogoExito }}</div>
+
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li *ngFor="let grupo of gruposCatalogo" [style.borderBottom]="isDark ? '1px solid #374151' : '1px solid #e5e7eb'" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 5px;">
+          <span>
+            <b style="color: #3b82f6;">#{{ grupo.id_grupo }}</b> - {{ grupo.nombre }}
+            <span style="font-size: 0.85em; margin-left: 8px; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #475569;">
+              {{ grupo.zona }}
+            </span>
+          </span>
+          <button (click)="eliminarGrupo(grupo.id_grupo)" title="Eliminar" style="background: #ef4444; color: white; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer;">🗑️</button>
+        </li>
+      </ul>
+      <div *ngIf="gruposCatalogo.length === 0" style="text-align: center; padding: 20px; opacity: 0.6;">No hay grupos registrados.</div>
+
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="mostrarModalZafras" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; justify-content: center; align-items: center;">
+    <div class="modal-content" [style.background]="isDark ? '#1f2937' : '#ffffff'" [style.color]="isDark ? '#f3f4f6' : '#111827'" style="padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0; font-size: 1.2rem;">🚜 Catálogo de Zafras</h3>
+        <button (click)="cerrarModalZafras()" [style.color]="isDark ? '#f3f4f6' : '#111827'" style="background: none; border: none; font-size: 1.5em; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+  
+  <input type="text" 
+         [(ngModel)]="formZafra.nombre" 
+         placeholder="Nombre (Ej: Zafra 2025-2026)" 
+         style="padding: 10px; border-radius: 6px; outline: none;"
+         [style.color]="isDark ? '#ffffff' : '#000000'"
+         [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'"
+         [style.border]="isDark ? '1px solid #4b5563' : '1px solid #d1d5db'">
+  
+  <div style="display: flex; gap: 10px;">
+    
+    <input type="date" 
+           [(ngModel)]="formZafra.fecha_inicio" 
+           title="Fecha de inicio" 
+           style="flex: 1; padding: 10px; border-radius: 6px; outline: none;"
+           [style.color]="isDark ? '#ffffff' : '#000000'"
+           [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'"
+           [style.border]="isDark ? '1px solid #4b5563' : '1px solid #d1d5db'"
+           [style.color-scheme]="isDark ? 'dark' : 'light'"> <input type="date" 
+           [(ngModel)]="formZafra.fecha_fin" 
+           title="Fecha de fin" 
+           style="flex: 1; padding: 10px; border-radius: 6px; outline: none;"
+           [style.color]="isDark ? '#ffffff' : '#000000'"
+           [style.backgroundColor]="isDark ? '#1e293b' : '#ffffff'"
+           [style.border]="isDark ? '1px solid #4b5563' : '1px solid #d1d5db'"
+           [style.color-scheme]="isDark ? 'dark' : 'light'"> </div>
+  
+  <div style="display: flex; align-items: center; gap: 10px; padding: 5px 0;">
+    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"
+           [style.color]="isDark ? '#e5e7eb' : '#374151'"> <input type="checkbox" [(ngModel)]="formZafra.activa"> Zafra Activa
+    </label>
+  </div>
+
+  <button (click)="guardarNuevaZafra()" 
+          [disabled]="cargandoCatalogo" 
+          style="background: #10b981; color: white; font-weight: bold; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 5px;">
+    ➕ Agregar Nueva Zafra
+  </button>
+
+</div>
+
+      <div *ngIf="mensajeCatalogoError" style="color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; border: 1px solid #fca5a5;">⚠️ {{ mensajeCatalogoError }}</div>
+      <div *ngIf="mensajeCatalogoExito" style="color: #10b981; background: #ecfdf5; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; border: 1px solid #6ee7b7;">✅ {{ mensajeCatalogoExito }}</div>
+
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li *ngFor="let zafra of zafrasCatalogo" [style.borderBottom]="isDark ? '1px solid #374151' : '1px solid #e5e7eb'" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 5px;">
+          
+          <div style="display: flex; flex-direction: column;">
+            <b style="color: #3b82f6; font-size: 1.1em;">{{ zafra.nombre }}</b>
+            <span style="font-size: 0.8em; color: #6b7280; margin-top: 3px;" *ngIf="zafra.fecha_inicio || zafra.fecha_fin">
+              {{ (zafra.fecha_inicio | date:'dd/MM/yyyy') || 'Sin fecha' }} - {{ (zafra.fecha_fin | date:'dd/MM/yyyy') || 'Sin fecha' }}
+            </span>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 0.75em; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold;" [style.background]="zafra.activa ? '#10b981' : '#9ca3af'">
+              {{ zafra.activa ? 'Activa' : 'Inactiva' }}
+            </span>
+            <button (click)="eliminarZafra(zafra.id_zafra)" title="Eliminar" style="background: #ef4444; color: white; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer;">🗑️</button>
+          </div>
+
+        </li>
+      </ul>
+      <div *ngIf="zafrasCatalogo.length === 0" style="text-align: center; padding: 20px; opacity: 0.6;">No hay zafras registradas.</div>
+
+    </div>
+  </div>
+
+</div>

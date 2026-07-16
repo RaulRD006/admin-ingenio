@@ -1,0 +1,75 @@
+<div class="login-wrapper">
+ 
+  <div class="carousel-side">
+    <div class="carousel">
+      <div class="carousel-track" [style.transform]="'translateX(-' + currentSlide * 100 + '%)'">
+        <div class="carousel-slide" *ngFor="let img of images">
+          <img [src]="img.url" [alt]="img.alt" />
+          <div class="slide-overlay">
+            <p class="slide-caption">{{ img.caption }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="carousel-dots">
+      <span
+        *ngFor="let img of images; let i = index"
+        class="dot"
+        [class.active]="i === currentSlide"
+        (click)="goToSlide(i)">
+      </span>
+    </div>
+  </div>
+ 
+  <div class="form-side">
+    <div class="form-container">
+ 
+      <div class="brand login-logo-container">
+        <img src="LOGO_BSM.png" alt="Logo Empresa" class="login-logo">
+        <span class="brand-name">Ingenio Beta San Miguel Central La Providencia</span>
+      </div>
+ 
+      <h1 class="form-title">Inicio de Sesión</h1>
+      <p class="form-subtitle">Ingresa tus credenciales para continuar</p>
+ 
+      <div class="form-group">
+        <label>Usuario</label>
+        <input
+          type="text"
+          [(ngModel)]="username"
+          placeholder="Ingresa tu usuario"
+          class="form-input"
+        />
+      </div>
+ 
+      <div class="form-group">
+        <label>Contraseña</label>
+        <div class="input-password">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            placeholder="Ingresa tu contraseña"
+            class="form-input"
+          />
+          <button class="eye-btn" (click)="togglePassword()">
+            <span *ngIf="!showPassword">🕵️</span>
+            <span *ngIf="showPassword">👁️</span>
+          </button>
+        </div>
+      </div>
+ 
+      <div class="error-msg" *ngIf="errorMsg">
+        {{ errorMsg }}
+      </div>
+ 
+      <button class="btn-ingresar" (click)="login()" [disabled]="loading">
+        <span *ngIf="!loading">Ingresar</span>
+        <span *ngIf="loading" class="spinner"></span>
+      </button>
+ 
+      
+    </div>
+  </div>
+ 
+</div>
