@@ -11,6 +11,7 @@ declare var process: any;
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
+app.set('trust proxy', true);
 const angularApp = new AngularNodeAppEngine();
 
 // ==========================================
