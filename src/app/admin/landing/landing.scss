@@ -1328,4 +1328,36 @@ input, select {
     padding-bottom: 15px !important;
     z-index: 10; /* Asegura que los botones se puedan tocar */
   }
+  /* 7. Forzar que el logo no tenga fondo de color (quitar cuadro verde) */
+  .brand-logo {
+    background: transparent !important;
+  }
+
+  /* 8. Centrar el título de Análisis Demográfico */
+  .chart-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  
+  .chart-header div {
+    text-align: center !important;
+    width: 100%;
+  }
+
+  .chart-sub {
+    text-align: center !important;
+  }
+
+  /* 9. Centrar la lista de datos (Comunidades, etc.) debajo de la gráfica */
+  .pie-legend {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important; /* Centra los elementos */
+  }
+
+  .legend-item {
+    justify-content: center !important; /* Centra el cuadrito de color y el texto */
+    width: 100% !important;
+  }
 }
