@@ -1197,4 +1197,20 @@ input, select {
     color: #ffffff !important;
   }
 }
+/* Estilo normal para computadora (lado a lado) */
+.contenedor-tarjetas {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Estilo que se activa SOLO en celulares */
+@media (max-width: 768px) {
+  .contenedor-tarjetas {
+    flex-direction: column; /* Pone una tarjeta debajo de la otra */
+  }
+}
+.tabla-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
 }
