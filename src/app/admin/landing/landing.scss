@@ -1487,4 +1487,37 @@ input, select {
     width: 100% !important;
   }
 }
+/* =========================================
+   FORZAR TARJETA DE CATÁLOGOS A MODO OSCURO
+   ========================================= */
+.dashboard .tarjeta-catalogos {
+  background-color: #1e293b !important; /* Fondo azul oscuro elegante */
+  color: #f3f4f6 !important; /* Texto principal blanco */
+  border: 1px solid #334155 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Forzar los textos internos a colores claros */
+.dashboard .tarjeta-catalogos h3,
+.dashboard .tarjeta-catalogos h3 span {
+  color: #f3f4f6 !important; 
+}
+
+.dashboard .tarjeta-catalogos p {
+  color: #94a3b8 !important; /* Texto secundario gris claro */
+}
+
+/* Forzar los botones a modo oscuro */
+.dashboard .btn-catalogo {
+  background-color: #0f172a !important; /* Fondo del botón casi negro */
+  color: #f3f4f6 !important; /* Letras blancas */
+  border: 1px solid #334155 !important; /* Borde sutil oscuro */
+}
+
+/* Efecto al pasar el dedo o el mouse por el botón */
+.dashboard .btn-catalogo:hover,
+.dashboard .btn-catalogo:active {
+  background-color: #334155 !important; 
+  border-color: #475569 !important;
+}
 }
