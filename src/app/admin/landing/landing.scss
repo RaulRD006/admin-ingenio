@@ -1388,4 +1388,103 @@ input, select {
     margin-top: 15px !important;
     z-index: 10 !important;
   }
+  /* =========================================
+   DISEÑO RESPONSIVO (MODO CLARO Y OSCURO)
+   ========================================= */
+@media (max-width: 768px) {
+  
+  /* 1. Arreglar el encabezado en TODOS los temas */
+  .dashboard .header {
+    position: relative !important; 
+    flex-direction: column !important; 
+    height: auto !important;
+    padding: 15px !important;
+    z-index: 1 !important;
+  }
+  
+  .dashboard .header-brand {
+    flex-direction: column !important;
+    height: auto !important;
+    justify-content: center !important;
+    text-align: center;
+  }
+
+  /* 2. Destruir el cuadro verde del logo en el Modo Claro */
+  .dashboard .brand-logo, 
+  .dashboard .brand-logo img,
+  .dashboard:not(.dark) .brand-logo {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .dashboard .brand-text {
+    position: static !important; 
+    margin-top: 10px;
+    align-items: center !important;
+  }
+
+  .dashboard .header-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* 3. Tarjetas a 1 sola columna */
+  .dashboard .stats-grid {
+    grid-template-columns: 1fr !important; 
+  }
+
+  .dashboard .chart-section {
+    flex-direction: column !important;
+    display: flex;
+  }
+
+  .dashboard .chart-card, 
+  .dashboard .summary-card {
+    width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  /* 4. Separar la gráfica de pastel de los botones de paginación */
+  .dashboard .pie-legend {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    height: auto !important;
+    max-height: max-content !important; 
+    margin-bottom: 40px !important; 
+  }
+
+  .dashboard .legend-item {
+    justify-content: center !important; 
+    width: 100% !important;
+  }
+
+  .dashboard .pagination-controls {
+    position: relative !important;
+    margin-top: 15px !important;
+    z-index: 10 !important;
+  }
+
+  /* 5. Filtros y Formularios a columna completa */
+  .dashboard .filters-row {
+    flex-direction: column !important;
+  }
+
+  .dashboard .filter-group {
+    width: 100% !important;
+  }
+
+  .dashboard .crud-section {
+    flex-direction: column !important;
+  }
+
+  .dashboard .form-card, 
+  .dashboard .list-card, 
+  .dashboard .add-card {
+    width: 100% !important;
+  }
+}
 }
