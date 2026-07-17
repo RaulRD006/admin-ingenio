@@ -1360,4 +1360,32 @@ input, select {
     justify-content: center !important; /* Centra el cuadrito de color y el texto */
     width: 100% !important;
   }
+  /* 1. Hacer que el encabezado no persiga la pantalla y se desplace normal */
+  .header {
+    position: relative !important; /* Esto evita que flote sobre tu contenido */
+    z-index: 1 !important;
+  }
+
+  /* 2. Destruir el cuadro verde del logo en cualquier tema */
+  .brand-logo, .brand-logo img {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* 3. Asegurar que las gráficas y listas no choquen con los botones */
+  .pie-legend {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    height: auto !important;
+    max-height: max-content !important; 
+    margin-bottom: 40px !important; /* Da espacio a los botones */
+  }
+
+  .pagination-controls {
+    position: relative !important;
+    margin-top: 15px !important;
+    z-index: 10 !important;
+  }
 }
