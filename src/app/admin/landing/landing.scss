@@ -1308,4 +1308,24 @@ input, select {
     padding: 15px !important;
   }
 }
+/* 6. Arreglar superposición de la gráfica de pastel y paginación */
+  .pie-chart-container {
+    height: auto !important;
+    min-height: min-content !important;
+    padding-bottom: 20px;
+  }
+  
+  .pie-legend {
+    position: relative !important;
+    height: auto !important;
+    max-height: none !important; /* Deja que la lista crezca todo lo necesario */
+    margin-bottom: 25px !important; 
+  }
+
+  .pagination-controls {
+    position: relative !important;
+    margin-top: 25px !important;
+    padding-bottom: 15px !important;
+    z-index: 10; /* Asegura que los botones se puedan tocar */
+  }
 }
