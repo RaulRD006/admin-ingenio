@@ -1,3 +1,42 @@
+<style>
+  /* ESTILOS FORZADOS PARA CELULAR */
+  @media (max-width: 768px) {
+    .header {
+      position: relative !important;
+      flex-direction: column !important;
+      height: auto !important;
+      padding: 15px !important;
+      z-index: 10 !important;
+    }
+    .header-brand {
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+    .brand-logo, .brand-logo img {
+      background-color: transparent !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    .chart-header {
+      flex-direction: column !important;
+      text-align: center !important;
+    }
+    .pie-legend {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      margin-bottom: 40px !important; 
+    }
+    .legend-item {
+      justify-content: center !important;
+      width: 100% !important;
+    }
+    .pagination-controls {
+      position: relative !important;
+      margin-top: 15px !important;
+    }
+  }
+</style>
 <div class="dashboard" [class.dark]="isDark">
 
   <header class="header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 15px; gap: 15px;">
