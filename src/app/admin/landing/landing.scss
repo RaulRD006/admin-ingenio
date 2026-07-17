@@ -1213,4 +1213,99 @@ input, select {
   overflow-x: auto;
   width: 100%;
 }
+/* =========================================
+   DISEÑO RESPONSIVO (CELULARES Y TABLETS)
+   ========================================= */
+@media (max-width: 768px) {
+  
+  /* 1. Arreglar el encabezado y logo */
+  .header {
+    flex-direction: column !important; /* Apila todo hacia abajo */
+    height: auto !important;
+    padding: 15px !important;
+    gap: 15px;
+  }
+  
+  .header-brand {
+    flex-direction: column !important;
+    height: auto !important;
+    justify-content: center !important;
+    text-align: center;
+  }
+
+  .brand-text {
+    position: static !important; /* Quita la posición absoluta que desborda el texto */
+    margin-top: 10px;
+    align-items: center !important;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* 2. Tarjetas de Estadísticas y Catálogos a 1 sola columna */
+  .stats-grid {
+    grid-template-columns: 1fr !important; 
+    gap: 15px;
+  }
+
+  .botones-catalogos {
+    flex-direction: column !important;
+  }
+  
+  .btn-catalogo {
+    width: 100% !important;
+  }
+
+  /* 3. Sección de Gráficas */
+  .chart-section {
+    flex-direction: column !important;
+    display: flex;
+  }
+
+  /* Permitir scroll lateral en las gráficas para que no rompan la pantalla */
+  .chart-card, .summary-card {
+    width: 100% !important;
+    overflow-x: hidden;
+  }
+  
+  .bar-chart, .chart-bars {
+    overflow-x: auto; /* Permite deslizar el dedo a la derecha */
+    padding-bottom: 10px;
+  }
+
+  .chart-tabs {
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+  }
+
+  /* 4. Filtros apilados */
+  .filters-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .filter-group {
+    width: 100% !important;
+  }
+
+  /* 5. Sección de Cortadores (Formulario y Lista) */
+  .crud-section {
+    flex-direction: column !important;
+  }
+
+  .form-card, .list-card, .add-card {
+    width: 100% !important;
+  }
+  
+  /* Arreglar los modales emergentes para celular */
+  .modal-content {
+    width: 95% !important;
+    padding: 15px !important;
+  }
+}
 }
