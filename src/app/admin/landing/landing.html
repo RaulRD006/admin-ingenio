@@ -6,19 +6,20 @@
     box-shadow: none !important;
   }
 
-  /* Asegurar que el encabezado use todo el ancho y empuje los botones a la derecha */
+  /* Asegurar que el encabezado use todo el ancho, empuje los botones y NO se quede pegado */
   .header {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
+    position: relative !important; /* <--- ESTA ES LA MAGIA QUE LO DESPEGA DEL TECHO */
   }
   
   .header-actions {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
-    margin-left: auto !important; /* Esta es la magia que los empuja a la derecha */
+    margin-left: auto !important; 
     gap: 15px !important;
   }
 
@@ -36,7 +37,6 @@
       align-items: center !important;
     }
     
-    /* En el celular, volvemos a centrar los botones para que no se desborden */
     .header-actions {
       margin-left: 0 !important;
       justify-content: center !important;
@@ -44,7 +44,6 @@
       margin-top: 10px !important;
     }
     
-    /* Obligar a los botones de Catálogos a estar apilados en 1 sola columna */
     .botones-catalogos {
       display: flex !important;
       flex-direction: column !important;
@@ -82,7 +81,6 @@
     <div class="header-brand" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
       
       <div class="brand-logo" style="width: 150px; display: flex; align-items: center; justify-content: center;">
-        <!-- Asegúrate de que el src coincida con el nombre de tu imagen -->
         <img src="LOGO_BSM.png" alt="Logo Empresa" style="width: 100%; height: auto; object-fit: contain;">
       </div>
       
@@ -93,7 +91,6 @@
 
     </div>
 
-    <!-- Aquí quitamos el "margin: 0 auto" y pusimos "margin-left: auto" para empujarlo a la derecha -->
     <div class="header-actions" style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
       <span class="role-badge" style="background: #e5e7eb; color: #374151; padding: 5px 10px; border-radius: 20px; font-size: 0.8em; font-weight: bold; text-transform: uppercase;">
         {{ rolUsuario }}
