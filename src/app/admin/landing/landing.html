@@ -180,12 +180,24 @@
             <h3>Análisis Demográfico</h3>
             <p class="chart-sub">Métricas visuales del personal</p>
           </div>
-          <div class="chart-tabs">
-            <button [class.active]="graficaActiva === 'municipio'" (click)="graficaActiva = 'municipio'">Zonas</button>
-            <button [class.active]="graficaActiva === 'sexo'" (click)="graficaActiva = 'sexo'">Sexo</button>
-            <button [class.active]="graficaActiva === 'edad'" (click)="graficaActiva = 'edad'">Edad</button>
-            <button [class.active]="graficaActiva === 'comunidad'" (click)="graficaActiva = 'comunidad'">Origen</button>
+          <!-- Cabecera de la gráfica forzada a mantenerse en fila -->
+          <div class="chart-header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; width: 100%; gap: 15px;">
+  
+            <!-- Contenedor del título -->
+           <div style="display: flex; flex-direction: column;">
+           <h3 style="margin: 0 !important;">Análisis Demográfico</h3>
+           <p style="margin: 0 !important; font-size: 0.9em; opacity: 0.8;">Métricas visuales del personal</p>
+           </div>
+
+            <div class="chart-tabs" style="display: flex; flex-direction: row; gap: 10px; flex-wrap: wrap;">
+             <button [class.active]="graficaActiva === 'municipio'" (click)="graficaActiva = 'municipio'">Zonas</button>
+             <button [class.active]="graficaActiva === 'sexo'" (click)="graficaActiva = 'sexo'">Sexo</button>
+             <button [class.active]="graficaActiva === 'edad'" (click)="graficaActiva = 'edad'">Edad</button>
+             <button [class.active]="graficaActiva === 'comunidad'" (click)="graficaActiva = 'comunidad'">Origen</button>
+            </div>
+
           </div>
+          
         </div>
 
         <div class="sub-chart-toggle" *ngIf="graficaActiva === 'sexo' || graficaActiva === 'edad' || graficaActiva === 'comunidad'">
