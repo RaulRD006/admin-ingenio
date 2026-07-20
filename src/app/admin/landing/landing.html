@@ -6,13 +6,12 @@
     box-shadow: none !important;
   }
 
-  /* Asegurar que el encabezado use todo el ancho, empuje los botones y NO se quede pegado */
   .header {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
-    position: relative !important; /* <--- ESTA ES LA MAGIA QUE LO DESPEGA DEL TECHO */
+    position: relative !important; 
   }
   
   .header-actions {
@@ -21,6 +20,14 @@
     justify-content: flex-end !important;
     margin-left: auto !important; 
     gap: 15px !important;
+  }
+
+  /* NUEVO: Blindar el acomodo de las gráficas en la computadora para ambos modos */
+  .chart-header {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
   }
 
   /* 2. ESTILOS FORZADOS SOLO PARA CELULAR */
@@ -54,6 +61,7 @@
       box-sizing: border-box !important;
     }
 
+    /* En el celular sí obligamos a la gráfica a ser columna */
     .chart-header {
       flex-direction: column !important;
       text-align: center !important;
