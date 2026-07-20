@@ -22,12 +22,20 @@
     gap: 15px !important;
   }
 
-  /* NUEVO: Blindar el acomodo de las gráficas en la computadora para ambos modos */
-  .chart-header {
+  /* NUEVO: Blindaje absoluto contra el modo oscuro en la computadora */
+  .chart-header, .dashboard.dark .chart-header {
     display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
     align-items: center !important;
+    width: 100% !important;
+  }
+
+  .chart-tabs, .dashboard.dark .chart-tabs {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    margin-left: auto !important;
   }
 
   /* 2. ESTILOS FORZADOS SOLO PARA CELULAR */
@@ -61,11 +69,19 @@
       box-sizing: border-box !important;
     }
 
-    /* En el celular sí obligamos a la gráfica a ser columna */
-    .chart-header {
+    /* En el celular sí obligamos a la gráfica a ser columna en AMBOS modos */
+    .chart-header, .dashboard.dark .chart-header {
       flex-direction: column !important;
       text-align: center !important;
     }
+    .chart-tabs, .dashboard.dark .chart-tabs {
+      margin-left: 0 !important;
+      justify-content: center !important;
+      margin-top: 15px !important;
+      width: 100% !important;
+      flex-wrap: wrap !important;
+    }
+
     .pie-legend {
       display: flex !important;
       flex-direction: column !important;
@@ -82,6 +98,7 @@
     }
   }
 </style>
+
 <div class="dashboard" [class.dark]="isDark">
 
   <header class="header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 15px; gap: 15px;">
@@ -177,27 +194,15 @@
       <div class="chart-card">
         <div class="chart-header">
           <div>
-            <h3>Análisis Demográfico</h3>
-            <p class="chart-sub">Métricas visuales del personal</p>
+            <h3 style="margin: 0;">Análisis Demográfico</h3>
+            <p class="chart-sub" style="margin: 0;">Métricas visuales del personal</p>
           </div>
-          <!-- Cabecera de la gráfica forzada a mantenerse en fila -->
-          <div class="chart-header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; width: 100%; gap: 15px;">
-  
-            <!-- Contenedor del título -->
-           <div style="display: flex; flex-direction: column;">
-           <h3 style="margin: 0 !important;">Análisis Demográfico</h3>
-           <p style="margin: 0 !important; font-size: 0.9em; opacity: 0.8;">Métricas visuales del personal</p>
-           </div>
-
-            <div class="chart-tabs" style="display: flex; flex-direction: row; gap: 10px; flex-wrap: wrap;">
-             <button [class.active]="graficaActiva === 'municipio'" (click)="graficaActiva = 'municipio'">Zonas</button>
-             <button [class.active]="graficaActiva === 'sexo'" (click)="graficaActiva = 'sexo'">Sexo</button>
-             <button [class.active]="graficaActiva === 'edad'" (click)="graficaActiva = 'edad'">Edad</button>
-             <button [class.active]="graficaActiva === 'comunidad'" (click)="graficaActiva = 'comunidad'">Origen</button>
-            </div>
-
+          <div class="chart-tabs">
+            <button [class.active]="graficaActiva === 'municipio'" (click)="graficaActiva = 'municipio'">Zonas</button>
+            <button [class.active]="graficaActiva === 'sexo'" (click)="graficaActiva = 'sexo'">Sexo</button>
+            <button [class.active]="graficaActiva === 'edad'" (click)="graficaActiva = 'edad'">Edad</button>
+            <button [class.active]="graficaActiva === 'comunidad'" (click)="graficaActiva = 'comunidad'">Origen</button>
           </div>
-          
         </div>
 
         <div class="sub-chart-toggle" *ngIf="graficaActiva === 'sexo' || graficaActiva === 'edad' || graficaActiva === 'comunidad'">
