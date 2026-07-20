@@ -22,8 +22,8 @@
     gap: 15px !important;
   }
 
-  /* NUEVO: Blindaje absoluto contra el modo oscuro en la computadora */
-  .chart-header, .dashboard.dark .chart-header {
+  /* NUEVO: Clases "chaleco antibalas" para ignorar el modo oscuro global */
+  .cabecera-graficas-fix {
     display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
@@ -31,7 +31,14 @@
     width: 100% !important;
   }
 
-  .chart-tabs, .dashboard.dark .chart-tabs {
+  .titulo-graficas-fix {
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .botones-graficas-fix {
     display: flex !important;
     flex-direction: row !important;
     gap: 10px !important;
@@ -69,12 +76,18 @@
       box-sizing: border-box !important;
     }
 
-    /* En el celular sí obligamos a la gráfica a ser columna en AMBOS modos */
-    .chart-header, .dashboard.dark .chart-header {
+    /* En el celular sí obligamos a la gráfica a centrarse y apilarse */
+    .cabecera-graficas-fix {
       flex-direction: column !important;
       text-align: center !important;
     }
-    .chart-tabs, .dashboard.dark .chart-tabs {
+    
+    .titulo-graficas-fix {
+      align-items: center !important;
+      text-align: center !important;
+    }
+
+    .botones-graficas-fix {
       margin-left: 0 !important;
       justify-content: center !important;
       margin-top: 15px !important;
@@ -156,6 +169,7 @@
         </button>
       </div>
     </div>
+    
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-info">
@@ -192,12 +206,14 @@
 
     <div class="chart-section">
       <div class="chart-card">
-        <div class="chart-header">
-          <div>
+        
+        <!-- AQUI ESTÁ LA MAGIA: Combinamos tus clases originales con nuestras clases blindadas -->
+        <div class="chart-header cabecera-graficas-fix">
+          <div class="titulo-graficas-fix">
             <h3 style="margin: 0;">Análisis Demográfico</h3>
             <p class="chart-sub" style="margin: 0;">Métricas visuales del personal</p>
           </div>
-          <div class="chart-tabs">
+          <div class="chart-tabs botones-graficas-fix">
             <button [class.active]="graficaActiva === 'municipio'" (click)="graficaActiva = 'municipio'">Zonas</button>
             <button [class.active]="graficaActiva === 'sexo'" (click)="graficaActiva = 'sexo'">Sexo</button>
             <button [class.active]="graficaActiva === 'edad'" (click)="graficaActiva = 'edad'">Edad</button>
